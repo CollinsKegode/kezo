@@ -12,12 +12,13 @@ app.use(express.static('public'))
 
 //homepage
 app.get('/', (req, res) => {
-    res.render('index')
+    res.render('index', {title: 'Hello world - from backend'})
 })
 
 //about
 app.get('/about', (req, res) => {
-    res.render('about')
+    const languages = ['Go', 'Java', 'Rust', 'C++', 'Python', 'JavaScript']
+    res.render('about', {languages})
 })
 
 //signup
