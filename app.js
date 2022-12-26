@@ -1,6 +1,15 @@
 import express from 'express'
+import mysql from 'mysql'
 
 const app = express()
+
+//create a db connection
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'kezo'
+})
 
 // set template engine and specify extension
 app.set('view engine', 'ejs')
@@ -8,34 +17,8 @@ app.set('view engine', 'ejs')
 // source for static files
 app.use(express.static('public'))
 
-const notes = [
-    {
-        id: 1,
-        title: 'Title 1',
-        body: 'Body of the first note goes here.'
-    },
-    {
-        id: 2,
-        title: 'Title 2',
-        body: 'Body of the second note goes here.'
-    },
-    {
-        id: 3,
-        title: 'Title 3',
-        body: 'Body of the third note goes here.'
-    },
-    {
-        id: 4,
-        title: 'Title 4',
-        body: 'Body of the fourth note goes here.'
-    },
-    {
-        id: 5,
-        title: 'Title 5',
-        body: 'Body of the fifth note goes here.'
-    }
-
-]
+//configuration to accept form information
+app.use(express.urlencoded({extend: true}))
 
 //routes
 
@@ -46,20 +29,54 @@ app.get('/', (req, res) => {
 
 //view all notes
 app.get('/notes', (req, res) => {
-    res.render('notes', {notes})
+    //retrive all notes from notes table
+    let sql = 'SELECT * FROM notes'
+    connection.query(
+
+        sql, (error, results) => {
+            res.render('notes', {notes: results})
+        }
+    )
+
 })
 
 //view a single note 
 app.get('/note/:id', (req, res) => {
-    // find the note
-    const note = notes.find(note => note.id === parseInt(req.params.id))
-    res.render('note', {note})
+    // retrieve note grom note table
+   const sql = 'SELECT * FROM notes WHERE id = ?'
+
+   connection.query(
+        sql,
+        [ parseInt(req.params.id)],
+        (error, results) => {
+            res.render('note', {note: results[0]})
+        }
+   )
+   
 })
 
-//signup
-app.get('/signup', (req, res) => {
-    res.render('signup')
+//display a create form
+app.get('/create', (req, res) => {
+    res.render('create')
 })
+
+//submit create a note form
+app.post('/create', (req, res) => {
+    const note = {
+        title: req.body.title,
+        body: req.body.body
+    }
+
+    let sql = 'INSERT INTO notes (title, body) VALUES (?,?)'
+    connection.query(
+        sql,
+        [note.title, note.body],
+        (error, results) => {
+            res.redirect('/notes')
+        }
+
+    )
+}) 
 
 //404 error
 app.get('*', (req, res) => {
