@@ -5,5 +5,11 @@
         <h2><%= note.title %></h2>
         <p><%= note.body %></p>
     </main>
+    <div>
+        <a href="/edit/<%= note.id %>">Edit note</a>
+        <form action="/delete/<%= note.id %>" method="post">
+            <input type="submit" value="Delete note">
+        </form>
+    </div>
     
 <%- include('partials/footer') %>
