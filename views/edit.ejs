@@ -5,10 +5,10 @@
         <h2>Edit a note</h2>
         <form action="/edit/<%= note.id %>" method="post">
             <label for="">Title</label>
-            <input type="text" name="title" id="" value="<%= note.title %>">
+            <input class="form-input" type="text" name="title" id="" value="<%= note.title %>">
             <label for="">Body</label>
-            <textarea name="body" id="" cols="30" rows="10"><%= note.body %></textarea>
-            <input type="submit" value="Update">
+            <textarea class="form-input" name="body" id="" cols="30" rows="20"><%= note.body %></textarea>
+            <input type="submit" class="btn" value="Update">
         </form>
     </main>
 <%- include('partials/footer') %>
